@@ -8,6 +8,9 @@ import os
 api_key = os.environ.get("API_KEY")
 base_url = os.environ["BASE_URL"]
 root_dir = os.environ["ROOT_DIR"]
+puid = os.environ.get("PUID")
+pgid = os.environ.get("PGID")
+
 headers = { "X-Api-Key": api_key }
 
 rootFolder =''
@@ -19,7 +22,8 @@ def youtube(artist,track,trackNumber):
     )
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': os.path.join(root_dir,artist,trackNumber+'. %(title)s.%(ext)s'),
+        'outtmpl': os.chown(os.path.join(root_dir, artist, trackNumber + '. %(title)s.%(ext)s'), puid, pgid)
+,
     }
 
    
