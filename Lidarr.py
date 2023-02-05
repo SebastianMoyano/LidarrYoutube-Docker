@@ -15,24 +15,30 @@ headers = { "X-Api-Key": api_key }
 
 rootFolder =''
 def youtube(artist, track, trackNumber):
-    ydl = youtube_dl.YoutubeDL({})
-    search_result = ydl.extract_info(
-        'ytsearch:"' + artist + ' - ' + track + ' VEVO' + '"',
-        download=False  # We only want to extract the info
-    )
-    ydl_opts = {
-        'format': 'bestaudio/best[ext=mp3]',
-        'postprocessor_args': ['-af', 'af=aresample=48000:min_hard_comp=0.100000:first_pts=0'],
-        'outtmpl': os.path.join(root_dir, artist, trackNumber + '. ' + track + '.%(ext)s'),
-    }
-
-    # Get the first video from the search result
-    video = search_result['entries'][0]
-    print(video['title'])
-    if track.lower() in video['title'].lower():
-        print(video['webpage_url'])
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([video['webpage_url']])
+    try:
+        ydl = youtube_dl.YoutubeDL({})
+        search_result = ydl.extract_info(
+            'ytsearch:"' + artist + ' - ' + track + ' VEVO' + '"',
+            download=False  # We only want to extract the info
+        )
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'noplaylist': True,
+            'continue_dl': True,
+            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
+            'outtmpl': os.path.join(root_dir, artist, trackNumber + '. ' + track + '.%(ext)s'),
+        }
+    
+        # Get the first video from the search result
+        video = search_result['entries'][0]
+        print(video['title'])
+        if track.lower() in video['title'].lower():
+            print(video['webpage_url'])
+            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video['webpage_url']])
+                return True
+    except Exception:
+        return False     
 
 
 def rescan_folder_in_lidarr(host, api_key, path):
