@@ -4,10 +4,10 @@
 import youtube_dl
 import requests
 import os
-#b8ffb54c6079409cb07f662e8eda3034
-#http://100.84.12.29:8686/api/v1"
+
 api_key = os.environ.get("API_KEY")
 base_url = os.environ["BASE_URL"]
+root_dir = os.environ["ROOT_DIR"]
 headers = { "X-Api-Key": api_key }
 
 rootFolder =''
@@ -19,7 +19,7 @@ def youtube(artist,track,trackNumber):
     )
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': artist+'/'+trackNumber+'. %(title)s.%(ext)s',
+        'outtmpl': os.path.join(root_dir,artist,trackNumber,'. %(title)s.%(ext)s'),
     }
 
    
