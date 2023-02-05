@@ -21,7 +21,7 @@ def youtube(artist, track, trackNumber):
         download=False  # We only want to extract the info
     )
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'bestaudio/best[ext=mp3]',
         'postprocessor_args': ['-af', 'af=aresample=48000:min_hard_comp=0.100000:first_pts=0'],
         'outtmpl': os.path.join(root_dir, artist, trackNumber + '. ' + track + '.%(ext)s'),
     }

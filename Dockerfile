@@ -1,7 +1,7 @@
 # Dockerfile
 FROM python:3.9-alpine
 
-RUN apt-get update && apt-get install -y ffmpeg
+RUN apk update && apk add ffmpeg
 
 RUN pip install youtube_dl requests
 
