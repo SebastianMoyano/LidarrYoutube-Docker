@@ -19,7 +19,7 @@ def youtube(artist,track,trackNumber):
     )
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': os.path.join(root_dir,artist,trackNumber,'. %(title)s.%(ext)s'),
+        'outtmpl': os.path.join(root_dir,artist,trackNumber+'. %(title)s.%(ext)s'),
     }
 
    
