@@ -45,14 +45,13 @@ def youtube(artist, track, trackNumber,album):
                 audio['artist'] = artist
                 audio['title'] = track
                 audio['album'] = album['title']
-                audio['year'] = album['year']
-                audio['genre'] = album['genre']
                 audio['track'] = trackNumber
                 audio.save()
                 return True
     except Exception as e:
         print('#'*8)
-        print(e)
+        print('Error')
+        print (e, e.args)
         print('#'*8)
         return False 
 
