@@ -26,7 +26,7 @@ def youtube(artist, track, trackNumber,album):
             'noplaylist': True,
             'continue_dl': True,
             'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
-            'outtmpl': os.path.join(root_dir, artist, album,trackNumber + '. ' + track + '.%(ext)s'),
+            'outtmpl': os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.%(ext)s'),
         }
     
         # Get the first video from the search result
