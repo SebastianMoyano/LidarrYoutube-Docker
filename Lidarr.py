@@ -4,6 +4,7 @@
 import youtube_dl
 import requests
 import os
+from mutagen.easyid3 import EasyID3
 
 api_key = os.environ.get("API_KEY")
 base_url = os.environ["BASE_URL"]
@@ -25,21 +26,7 @@ def youtube(artist, track, trackNumber,album):
             'format': 'bestaudio/best',
             'noplaylist': True,
             'continue_dl': True,
-            'postprocessors': [
-                {
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'wav',
-                    'preferredquality': '192'
-                },
-                {
-                    'key': 'FFmpegMetadata',
-                    'metadata': {
-                        'artist': artist,
-                        'title': track,
-                        'album': album
-                    }
-                }
-            ],
+            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
             'outtmpl': os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.%(ext)s'),
         }
     
@@ -50,10 +37,16 @@ def youtube(artist, track, trackNumber,album):
             print(video['webpage_url'])
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video['webpage_url']])
+                # add ID3 tags using mutagen library
+                audio_file = os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.wav')
+                audio = EasyID3(audio_file)
+                audio['artist'] = artist
+                audio['title'] = track
+                audio['album'] = album
+                audio.save()
                 return True
-    except Exception as e:
-        print(e)
-        return False     
+    except Exception:
+        return False 
 
 
 def rescan_folder_in_lidarr(host, api_key, path):
