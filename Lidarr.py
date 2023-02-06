@@ -14,7 +14,7 @@ pgid = os.environ.get("PGID")
 headers = { "X-Api-Key": api_key }
 
 rootFolder =''
-def youtube(artist, track, trackNumber):
+def youtube(artist, track, trackNumber,album):
     try:
         ydl = youtube_dl.YoutubeDL({})
         search_result = ydl.extract_info(
@@ -26,7 +26,7 @@ def youtube(artist, track, trackNumber):
             'noplaylist': True,
             'continue_dl': True,
             'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
-            'outtmpl': os.path.join(root_dir, artist, trackNumber + '. ' + track + '.%(ext)s'),
+            'outtmpl': os.path.join(root_dir, artist, album,trackNumber + '. ' + track + '.%(ext)s'),
         }
     
         # Get the first video from the search result
@@ -53,7 +53,7 @@ def rescan_folder_in_lidarr(host, api_key, path):
         print("Rescan failed with status code", response.status_code)
 
 
-def get_tracks_with_hasFile(albumId,artist):
+def get_tracks_with_hasFile(albumId,artist,album):
     tracks_url = f"{base_url}/track?albumId={albumId}"
     response = requests.get(tracks_url, headers=headers)
     tracks = response.json()
@@ -62,7 +62,7 @@ def get_tracks_with_hasFile(albumId,artist):
         if track['hasFile'] == False:
             print(track)
             print(track['title'],' by ',artist)
-            youtube(artist,track['title'],track['trackNumber'])
+            youtube(artist,track['title'],track['trackNumber'],album)
             
             
         
@@ -82,7 +82,7 @@ if response.status_code == 200:
         album_ids.append(albums['id'])
         print(albums)
         print('#'*8)
-        get_tracks_with_hasFile(albums['id'],albums["artist"]["artistName"])
+        get_tracks_with_hasFile(albums['id'],albums["artist"]["artistName"],albums["title"])
         print(albums["artist"]["artistName"], " - ", albums["title"])
 else:
     print("Request failed with status code", response.status_code)
