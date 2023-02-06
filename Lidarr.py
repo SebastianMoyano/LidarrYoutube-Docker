@@ -26,8 +26,8 @@ def youtube(artist, track, trackNumber,album):
             'format': 'bestaudio/best',
             'noplaylist': True,
             'continue_dl': True,
-            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
-            'outtmpl': os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.%(ext)s'),
+            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192', }],
+            'outtmpl': os.path.join(root_dir, artist, album['title'],artist+' - '+album['title']+' - '+trackNumber + ' - ' + track + '.%(ext)s'),
         }
     
         # Get the first video from the search result
@@ -38,14 +38,21 @@ def youtube(artist, track, trackNumber,album):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video['webpage_url']])
                 # add ID3 tags using mutagen library
-                audio_file = os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.wav')
+                audio_file = os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.mp3')
+                print('Agregando info')
                 audio = EasyID3(audio_file)
                 audio['artist'] = artist
                 audio['title'] = track
-                audio['album'] = album
+                audio['album'] = album['title']
+                audio['year'] = album['year']
+                audio['genre'] = album['genre']
+                audio['track'] = trackNumber
                 audio.save()
                 return True
-    except Exception:
+    except Exception as e:
+        print('#'*8)
+        print(e)
+        print('#'*8)
         return False 
 
 
@@ -61,7 +68,7 @@ def rescan_folder_in_lidarr(host, api_key, path):
         print("Rescan failed with status code", response.status_code)
 
 
-def get_tracks_with_hasFile(albumId,artist,album):
+def get_tracks_with_hasFile(albumId,artist,albumRaw):
     tracks_url = f"{base_url}/track?albumId={albumId}"
     response = requests.get(tracks_url, headers=headers)
     tracks = response.json()
@@ -70,7 +77,7 @@ def get_tracks_with_hasFile(albumId,artist,album):
         if track['hasFile'] == False:
             print(track)
             print(track['title'],' by ',artist)
-            youtube(artist,track['title'],track['trackNumber'],album)
+            youtube(artist,track['title'],track['trackNumber'],albumRaw)
             
             
         
@@ -90,7 +97,7 @@ if response.status_code == 200:
         album_ids.append(albums['id'])
         print(albums)
         print('#'*8)
-        get_tracks_with_hasFile(albums['id'],albums["artist"]["artistName"],albums["title"])
+        get_tracks_with_hasFile(albums['id'],albums["artist"]["artistName"],albums)
         print(albums["artist"]["artistName"], " - ", albums["title"])
 else:
     print("Request failed with status code", response.status_code)
