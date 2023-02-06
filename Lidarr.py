@@ -51,7 +51,8 @@ def youtube(artist, track, trackNumber,album):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video['webpage_url']])
                 return True
-    except Exception:
+    except Exception as e:
+        print(e)
         return False     
 
 
