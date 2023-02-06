@@ -38,8 +38,9 @@ def youtube(artist, track, trackNumber,album):
             with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([video['webpage_url']])
                 # add ID3 tags using mutagen library
-                audio_file = os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.mp3')
+                audio_file = os.path.join(root_dir, artist, album['title'],artist+' - '+album['title']+' - '+trackNumber + ' - ' + track + '.mp3')
                 print('Agregando info')
+
                 audio = EasyID3(audio_file)
                 audio['artist'] = artist
                 audio['title'] = track
