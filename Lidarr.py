@@ -25,7 +25,21 @@ def youtube(artist, track, trackNumber,album):
             'format': 'bestaudio/best',
             'noplaylist': True,
             'continue_dl': True,
-            'postprocessors': [{'key': 'FFmpegExtractAudio','preferredcodec': 'wav','preferredquality': '192', }],
+            'postprocessors': [
+                {
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'wav',
+                    'preferredquality': '192'
+                },
+                {
+                    'key': 'FFmpegMetadata',
+                    'metadata': {
+                        'artist': artist,
+                        'title': track,
+                        'album': album
+                    }
+                }
+            ],
             'outtmpl': os.path.join(root_dir, artist, album,artist+' - '+album+' - '+trackNumber + ' - ' + track + '.%(ext)s'),
         }
     
